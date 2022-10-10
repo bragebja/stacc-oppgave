@@ -25,7 +25,7 @@ async def decrement_api_calls(token : str) -> bool:
 
         pool.close()
         await pool.wait_closed()
-        return count > 0
+        return rows_affected > 0
     # Return false if something unexpected happens, such as failing to connect, etc.
     except Exception as e:
         return False
