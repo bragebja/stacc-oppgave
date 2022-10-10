@@ -4,7 +4,8 @@ import pymysql
 import secrets
 
 ## DB CONFIGS
-HOST = "database-2.c2z77t0mvtlc.us-east-1.rds.amazonaws.com"
+HOST = "database-1eu.cobpbett9lnf.eu-west-2.rds.amazonaws.com" # Only available from AWS EC2 compute instance
+#HOST = "database-2.c2z77t0mvtlc.us-east-1.rds.amazonaws.com"  # Publicly available
 PORT = 3306
 USER = "admin"
 DB = "stacc_db"
