@@ -23,9 +23,37 @@ async def decrement_api_calls(token : str) -> bool:
                 query = "UPDATE api_token SET remaining_api_calls = (remaining_api_calls - 1) WHERE token = %s AND remaining_api_calls > 0"
                 rows_affected = await cur.execute(query, (token))
 
-        pool.close()
-        await pool.wait_closed()
         return rows_affected > 0
     # Return false if something unexpected happens, such as failing to connect, etc.
     except Exception as e:
         return False
+    finally:
+        pool.close()
+        await pool.wait_closed()
+
+
+async def get_remaining_api_calls(token : str) -> dict:
+    try:
+        ## Connect to DB
+        pool = await aiomysql.create_pool(host=HOST, port=PORT,
+                                        user=USER, password=PASSWORD,
+                                        db=DB, autocommit=True)
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Get how many more api calls the token can do
+                query = "SELECT remaining_api_calls FROM api_token WHERE token = %s"
+                rows_affected = await cur.execute(query, (token))
+                if not rows_affected:
+                    print("Not affected")
+                    return {"status" : 0, "description" : "Token does not exist"}
+                else:
+                    remaining_api_calls = await cur.fetchone()
+                    return {"status" : 1, "description" : "Success", "remaining_api_calls" : remaining_api_calls[0]}
+
+    # If something unexpected happens, such as failing to connect, etc.
+    except Exception as e:
+        print(e)
+        return {"status" : 0, "description" : "Something went wrong"}
+    finally:
+        pool.close()
+        await pool.wait_closed()
