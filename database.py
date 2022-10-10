@@ -35,6 +35,10 @@ async def decrement_api_calls(token : str) -> bool:
         await pool.wait_closed()
 
 
+# Get how many more api / pep calls a token have remaining.
+# Returns a dictionary with the format:
+# {"status" : 1, "description" : "Success", "remaining_api_calls" : b9b09ebdf29f464s82e23269c535acbd}
+# or alternatively {"status" : 0, "description" : "Token does not exist"} 
 async def get_remaining_api_calls(token : str) -> dict:
     try:
         ## Connect to DB
@@ -61,6 +65,10 @@ async def get_remaining_api_calls(token : str) -> dict:
         pool.close()
         await pool.wait_closed()
 
+# Creates a random token that has "how_many_calls" available api calls.
+# It creates a record in the sql db and returns the random token if it was a success
+# Example: {"status" : 1, "description" : "Success", "token" : b9b09ebdf29f464s82e23269c535acbd}
+# Example if not success: {"status" : 0, "description" : "Something went wrong"}
 async def create_api_token(how_many_calls : int) -> dict:
     # Create secret token of 16 bytes / 128 bits.
     token = secrets.token_hex(16)
