@@ -10,8 +10,8 @@ Jeg har forsøkt å publisert backend api + database ved bruk av AWS. Se 2 seper
 ## Installasjonskrav ##
 ### Installasjonskrav AWS ###
 Jeg har deployet backend api og database med å bruke en AWS EC2 compute instance og en RDS MySQL database.
-EC2 url: http://ec2-13-40-130-85.eu-west-2.compute.amazonaws.com/
-For noe interaktiv bruk av api, se http://ec2-13-40-130-85.eu-west-2.compute.amazonaws.com/docs/
+- EC2 url: http://ec2-13-40-130-85.eu-west-2.compute.amazonaws.com/
+- For noe interaktiv bruk av api, se http://ec2-13-40-130-85.eu-west-2.compute.amazonaws.com/docs/
 
 For Amazon Linux 2, kernel 5.10 bruker jeg følgende kommandoer for å installere og starte opp backend server.
 ```
@@ -36,6 +36,10 @@ pip3 install aiohttp[speedups]
 pip3 install aiomysql
 ```
 ### Hvordan starte web server lokalt ###
+```
+git clone https://github.com/bragebja/stacc-oppgave.git
+cd stacc-oppgave
+```
 I filen database.py, endre følgende:
 ```
 HOST = "database-1eu.cobpbett9lnf.eu-west-2.rds.amazonaws.com"
@@ -45,9 +49,11 @@ til:
 HOST = "database-2.c2z77t0mvtlc.us-east-1.rds.amazonaws.com"
 ```
 Naviger til der hvor main.py befinner seg.
+
 Kjør i terminal/cmd: uvicorn main:app --reload
 
 API vil være tilgjengelig på http://127.0.0.1:8000/api
+
 For noe interaktiv bruk av api, se http://127.0.0.1:8000/docs
 
 
