@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from stacc_api import pep
-from database import decrement_api_calls, get_remaining_api_calls
+from database import decrement_api_calls, get_remaining_api_calls, create_api_token
 
 app = FastAPI()
 
@@ -17,6 +17,13 @@ async def router_pep(name : str, token : str):
 @app.get("/api/remaining_api_calls")
 async def router_remaining_api_calls(token :str):
     response = await get_remaining_api_calls(token)
+    return response
+
+@app.post("/api/api_token")
+async def router_create_api_token():
+    # Create a random api token with 100 api calls
+    how_many_api_calls = 100
+    response = await create_api_token(how_many_api_calls)
     return response
 
 
