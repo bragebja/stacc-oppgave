@@ -59,7 +59,7 @@ CREATE DATABASE stacc_db;
 USE stacc_db;
 
 CREATE TABLE api_token (
-	token VARCHAR(34) PRIMARY KEY,
+	token VARCHAR(32) PRIMARY KEY,
     remaining_api_calls INT
 );
 
@@ -73,11 +73,15 @@ INSERT INTO api_token (token, remaining_api_calls) values
 ### pep ###
 PEP endpoint ligner på tilsvarende endpoint fra https://code-challenge.stacc.dev/. Forskjellen er at det kreves en token som parameter, og responsen er litt annerledes.
 ```
-GET /api/pep?name=Knut Arild Hareide &token=0xb9b09ebdf29f464s82e23269c535acbd HTTP/1.1
+GET /api/pep?name=Knut Arild Hareide &token=b9b09ebdf29f464s82e23269c535acbd HTTP/1.1
 ```
 Viss token har tillatelse til å gjøre flere api calls, da er formatet på respons følgende:
 ```
 {"status" : 1, "description" : "success", "response" : responsen fra eksisterende STACC api}
+```
+Viss token ikke har tillatelse, eller ikke eksisterer, da ser formatet slik ut:
+```
+{"status": 0, "description": "Key has no remaining api calls or does not exist", "response": {} }
 ```
 
 ### api_token ###
@@ -112,3 +116,5 @@ Eller feks:
 - For å gjøre ting litt enkelt har jeg valgt å inkludere token som et parameter, slik at det feks er enklere å teste. Det hadde nok sikkert vært bedre å brukt cookies eller lignende for dette.
 
 - Det er mulig å generere nye tokens hele tiden. Dette er i hovedsak gjort bare for å illustrere en enkel måte å genere token på / gjøre database query.
+
+- Se bortifra svak database passord, og passord i codebase. Dette er også noe som er gjort for enkelt skyld, til tross for svak sikkerhet.
