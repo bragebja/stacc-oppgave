@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from stacc_api import pep
-from database import decrement_api_calls
+from database import decrement_api_calls, get_remaining_api_calls
 
 app = FastAPI()
 
@@ -13,3 +13,10 @@ async def router_pep(name : str, token : str):
         return pep_response
     else:
         return {"status" : 0, "description" : "Key has no remaining api calls or does not exist", "response" : {}}
+
+@app.get("/api/remaining_api_calls")
+async def router_remaining_api_calls(token :str):
+    response = await get_remaining_api_calls(token)
+    return response
+
+
