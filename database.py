@@ -1,5 +1,7 @@
 import asyncio
 import aiomysql
+import pymysql
+import secrets
 
 ## DB CONFIGS
 HOST = "database-2.c2z77t0mvtlc.us-east-1.rds.amazonaws.com"
@@ -53,6 +55,30 @@ async def get_remaining_api_calls(token : str) -> dict:
     # If something unexpected happens, such as failing to connect, etc.
     except Exception as e:
         print(e)
+        return {"status" : 0, "description" : "Something went wrong"}
+    finally:
+        pool.close()
+        await pool.wait_closed()
+
+async def create_api_token(how_many_calls : int) -> dict:
+    # Create secret token of 16 bytes / 128 bits.
+    token = secrets.token_hex(16)
+    try:
+        ## Connect to DB
+        pool = await aiomysql.create_pool(host=HOST, port=PORT,
+                                        user=USER, password=PASSWORD,
+                                        db=DB, autocommit=True)
+        async with pool.acquire() as conn:
+            async with conn.cursor() as cur:
+                # Create api token consisting of a token and how many remaining calls it can do
+                query = "INSERT INTO api_token (token, remaining_api_calls) VALUES (%s, %s)"
+                await cur.execute(query, (token, how_many_calls))
+                return {"status" : 1, "description" : "Success", "token" : token}
+
+    # If something unexpected happens, such as failing to connect, duplicate entry, etc.
+    except pymysql.err.IntegrityError:
+        return {"status" : 0, "description" : "Token already exists"}
+    except Exception:
         return {"status" : 0, "description" : "Something went wrong"}
     finally:
         pool.close()
